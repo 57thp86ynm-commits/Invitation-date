@@ -1,78 +1,134 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invitation - Date</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        .container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            padding: 40px;
-            max-width: 600px;
-            width: 100%;
-            text-align: center;
-        }
-        
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 2.5em;
-        }
-        
-        .message {
-            color: #666;
-            font-size: 1.1em;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-        
-        .date-display {
-            background: #f0f0f0;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-        
-        .date-display p {
-            color: #764ba2;
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Invitation 💖</title>
+
+<style>
+  body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    margin-top: 120px;
+    background-color: #ffe6f0;
+    overflow: hidden;
+  }
+
+  h1 {
+    font-size: 2em;
+  }
+
+  button {
+    font-size: 20px;
+    padding: 10px 25px;
+    margin: 20px;
+    cursor: pointer;
+    border-radius: 10px;
+    border: none;
+  }
+
+  #yes {
+    background-color: #ff4d88;
+    color: white;
+  }
+
+  #no {
+    background-color: #ccc;
+  }
+
+  #message {
+    display: none;
+    margin-top: 30px;
+    font-size: 1.5em;
+  }
+
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+  }
+</style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>✨ Bienvenue ✨</h1>
-        <p class="message">Votre page est maintenant opérationnelle !</p>
-        <div class="date-display">
-            <p id="currentDate"></p>
-        </div>
-        <p class="message">Cette page a été créée le 28 avril 2026</p>
-    </div>
-    
-    <script>
-        // Afficher la date actuelle
-        const today = new Date();
-        const options = { year: 'numeric', month: 'long', day: 'numeric', language: 'fr' };
-        document.getElementById('currentDate').textContent = today.toLocaleDateString('fr-FR', options);
-    </script>
+
+<h1>Do you want to go on a date with me? 💖</h1>
+
+<button id="yes">Yes 😍</button>
+<button id="no">No 🙈</button>
+
+<div id="message">
+  I can't wait to see you again ❤️
+</div>
+
+<canvas id="confetti"></canvas>
+
+<script>
+const yesBtn = document.getElementById("yes");
+const noBtn = document.getElementById("no");
+const message = document.getElementById("message");
+const canvas = document.getElementById("confetti");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let pieces = [];
+
+function createConfetti() {
+  for (let i = 0; i < 200; i++) {
+    pieces.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      r: Math.random() * 6 + 2,
+      d: Math.random() * 10 + 5,
+      color: `hsl(${Math.random() * 360}, 100%, 60%)`,
+      tilt: Math.random() * 10 - 10
+    });
+  }
+}
+
+function drawConfetti() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  pieces.forEach((p, i) => {
+    ctx.beginPath();
+    ctx.fillStyle = p.color;
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    p.y += p.d;
+    p.x += Math.sin(p.tilt);
+
+    if (p.y > canvas.height) {
+      pieces[i].y = -10;
+    }
+  });
+
+  requestAnimationFrame(drawConfetti);
+}
+
+yesBtn.addEventListener("click", () => {
+  message.style.display = "block";
+  createConfetti();
+  drawConfetti();
+});
+
+// No button moves away
+document.addEventListener("mousemove", (e) => {
+  const rect = noBtn.getBoundingClientRect();
+  const distance = Math.hypot(
+    e.clientX - (rect.left + rect.width / 2),
+    e.clientY - (rect.top + rect.height / 2)
+  );
+
+  if (distance < 100) {
+    noBtn.style.position = "absolute";
+    noBtn.style.left = Math.random() * (window.innerWidth - rect.width) + "px";
+    noBtn.style.top = Math.random() * (window.innerHeight - rect.height) + "px";
+  }
+});
+</script>
+
 </body>
 </html>
